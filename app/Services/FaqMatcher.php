@@ -41,7 +41,7 @@ class FaqMatcher
             'category' => 'about',
         ],
         'asal dari mana|kaching dari mana|berbasis di mana' => [
-            'reply' => "Kaching POS berbasis di Indonesia, dibangun oleh Syahnahl dan tim untuk UMKM F&B Indonesia.",
+            'reply' => "Kaching POS berbasis di Indonesia, dibangun oleh Kaching FinTech Team untuk UMKM F&B Indonesia.",
             'category' => 'about',
         ],
 
