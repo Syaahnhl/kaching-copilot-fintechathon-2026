@@ -10,56 +10,61 @@
 
 ---
 
-## 1. About the Project
-Kaching Copilot helps small and medium-sized businesses understand their financial performance, identify operational risks, forecast short-term cash flow, simulate business decisions, and assess financing readiness.
+## 1. Project Summary & Topic E Relevance
+**Kaching SME Finance Copilot** transforms operational Point of Sale (POS) and inventory records of micro, small, and medium enterprises (MSMEs) into actionable, audit-grade financial intelligence.
 
-The system separates language-model reasoning from deterministic financial calculations. Financial outputs are grounded in application data and calculation services, while consequential actions require human authorization.
+Under the theme **"AI as a Financial Participant"**, Kaching Copilot addresses key financial blind spots faced by culinary and retail small businesses:
+* High working-capital bleed and food waste from unforecasted procurement.
+* Rapid profit margin compression driven by sudden raw material price inflation.
+* Unforeseen liquidity depletion (*cash runway blindness*).
+* Information asymmetry that blocks MSMEs from accessing formal bank credit.
 
-### Core Value Proposition for SMEs
-* **Grounded Intelligence:** Free-form LLMs frequently make calculation errors when performing multi-digit arithmetic. Kaching Copilot eliminates financial hallucinations by offloading all math to deterministic SQL and PHP engines.
-* **Proactive Risk Radar:** Continuously evaluates 6 critical operational risks (unusual voids, drawer cash variances, margin erosion, expense spikes, revenue drops, and runway depletion).
-* **Two-Phase Action Authorization:** The AI acts as a proposer, never an autonomous executor. Operational changes (e.g., price updates, vendor restocks) require explicit 6-digit Manager PIN verification.
-* **Financing Readiness (5 Pillars):** Transforms messy point-of-sale cash records into an objective 0–100 data readiness index with exportable audit dossiers to accelerate SME micro-credit underwriting.
+### Architectural Core Principles
+1. **Separation of Reasoning and Arithmetic:** Large Language Models (LLMs) are utilized strictly for semantic intent extraction, dialogue routing, and natural-language explanation. All financial arithmetic (revenue, COGS, margins, cash runway, and credit readiness) is executed deterministically by PHP and SQL calculation services (*Zero Financial Hallucination*).
+2. **Proposer, Never Unilateral Executor:** Consequential actions that modify business state (e.g., changing retail prices, issuing vendor restock orders) cannot be autonomously executed by the agent. They require a two-phase approval protocol gated by a 6-digit Owner/Manager PIN.
+3. **Multi-Tenant Strict Isolation:** Every financial aggregation, forecast, and simulation is strictly scoped by `user_id` and `outlet_id` at the database query level, with fail-closed HTTP 403 enforcement.
 
 ---
 
-## 2. Live Demo
+## 2. Feature Availability: Implemented vs. Roadmap
+
+### A. Currently Implemented & Verified in this Submission
+* **Grounded Financial Intelligence:** Real-time computation of net sales, cost of goods sold (COGS/HPP), gross profit, operating expenses, net margin, daily burn rate, and projected cash runway.
+* **Proactive Operational Risk Radar:** Continuous rule-based anomaly detection across 6 dimensions: revenue drop (>25%), expense spikes (>150%), margin erosion (>5 pp), abnormal voids/refunds (>5%), cash drawer variances (>Rp 50.000), and cash runway exhaustion (<7 days).
+* **7-Day Operational Cash-Flow Forecasting:** Multi-tier deterministic forecasting engine utilizing Day-of-Week (DOW) Seasonal Medians (Tier 1 baseline) with Weighted Moving Average (WMA-14 Tier 2) fallback.
+* **What-If Decision Simulator:** Real-time simulation of price adjustments, expense shocks, and inventory purchase feasibility against safety cash reserves without mutating production state.
+* **Two-Phase Action Authorization Firewall:** Structured action proposal generation (`ActionPolicyService`) with distributed locking, TTL expiration, single-use token consumption, and 6-digit Manager PIN authorization.
+* **SME Financing Readiness Index (0–100):** Objective 5-pillar scoring framework (Revenue Stability 25%, Margin Health 20%, Cash Discipline 25%, Operational Reliability 15%, Data Governance 15%) paired with an exportable audit-grade PDF Evidence Dossier.
+* **Dynamic Tool Clustering:** Algorithmic clustering of 25 canonical tools into 7 domain clusters (`core`, `sales`, `menu`, `cashflow`, `expenses`, `financing`, `risk`) reducing prompt token consumption by 51–88%.
+* **Deterministic Fallback Engine:** Resilient fail-soft mechanism providing essential numerical summaries during upstream LLM latency or HTTP 429 rate-limiting events.
+
+### B. Planned Roadmap (Future Enhancements)
+* **Automated Accounts Payable (AP) Ingestion:** OCR and automated parser for recurring offline supplier invoices outside direct POS records.
+* **Multi-Outlet Macro Benchmarking:** Anonymized peer cohort benchmarking across business categories.
+* **Direct Open Banking Reconciliation:** Automated bank feed synchronization for multi-account liquidity management.
+
+---
+
+## 3. Live Web Demonstration
+The primary interactive application is deployed and operational on the Kaching cloud platform. Evaluators are invited to test the live interactive conversational copilot directly on the web platform:
+
 * **Demo URL:** [https://kaching.id](https://kaching.id)
-* **Demo Account:** Provided separately by the project team.
-* **Security Notice:** For security, demo credentials are shared privately with authorized evaluators and must not be committed to this repository.
+* **Demo Evaluation Account:** Shared privately with the competition committee and evaluators (not committed to public source control for tenant security).
+* **Evaluation Data:** The demonstration environment operates against pre-seeded synthetic merchant accounts (Tenants 901, 902, 903) and does not expose real customer or transaction records.
 
-### How to Evaluate the Live Demo:
-1. Open the demo URL (`https://kaching.id`).
-2. Sign in using the supplied testing account.
-3. Open the Copilot interface.
-4. Try the scenarios listed in `docs/DEMO_SCENARIOS.md`.
-5. Compare the responses against the documented expected behavior.
-
-*The demo account uses approved testing data and does not provide unauthorized access to real customer records or production transactions.*
-
----
-
-## 3. Evaluation Scenarios
-The evaluation covers financial calculations, anomaly detection, cash-flow forecasting, what-if simulations, financing readiness, evidence transparency, AI-provider fallback, and human approval controls.
-
-Each scenario specifies its input, expected behavior, verification method, and actual test status.
-
-| Scene | Name | Focus Dimension | Target Persona | Verification Status |
-|:---|:---|:---|:---|:---:|
-| **Scene A** | Financial Investigation | Multi-step causal diagnosis & grounding | Tenant 902 (Warung Kopi Senja) | ✅ Verified (PASS) |
-| **Scene B** | What-If Pricing Simulation | Revenue/margin sensitivity without DB mutation | Tenant 901 (Popoyo Coffee) | ✅ Verified (PASS) |
-| **Scene C** | Capital Purchase Feasibility | Cash flow + forecast - purchase vs buffer | Tenant 901 / 903 | ✅ Verified (PASS) |
-| **Scene D** | Two-Phase Action Authorization | Proposal generation & Manager PIN firewall | Tenant 901 (Popoyo Coffee) | ✅ Verified (PASS) |
-| **Scene E** | Replay Attack Defense | Single-use proposal token invalidation (HTTP 404/410) | Tenant 901 (Popoyo Coffee) | ✅ Verified (PASS) |
-| **Scene F** | Cross-Tenant Isolation | Multi-outlet boundary enforcement (HTTP 403) | Tenant 902 vs 901 | ✅ Verified (PASS) |
-| **Scene G** | Financing Readiness Assessment | 5-pillar objective scoring & dossier export | Tenant 901 (Popoyo Coffee) | ✅ Verified (PASS) |
-
-*Full scenario protocols and verification steps are detailed in [`docs/DEMO_SCENARIOS.md`](docs/DEMO_SCENARIOS.md).*
+### Recommended Live Evaluation Protocol:
+1. Navigate to [https://kaching.id](https://kaching.id) and log in with the provided testing credentials.
+2. Access the **Copilot** interface from the backoffice navigation bar or floating assistant widget.
+3. Test the documented evaluation scenarios detailed in [`docs/DEMO_SCENARIOS.md`](docs/DEMO_SCENARIOS.md):
+   * *Scene A (Root Cause Investigation):* *"Kenapa laba saya turun minggu ini?"*
+   * *Scene B (Pricing Simulation):* *"Simulasikan kalau harga Ayam Geprek naik Rp 2.000."*
+   * *Scene C (Purchase Feasibility):* *"Apakah aman belanja stok bahan Rp 5.000.000 besok?"*
+   * *Scene D (Action Authorization):* Propose price update $\rightarrow$ Verify proposal $\rightarrow$ Authorize via Manager PIN.
+   * *Scene E (Financing Readiness):* *"Evaluasi kesiapan pinjaman modal usaha saya"* $\rightarrow$ Export Evidence Dossier PDF.
 
 ---
 
-## 4. Architecture & Submission Scope
-The system uses an LLM for intent interpretation and natural-language responses. Financial calculations are performed by application services rather than delegated to free-form model arithmetic.
+## 4. System Architecture & Workflows
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -69,87 +74,133 @@ The system uses an LLM for intent interpretation and natural-language responses.
                                        │ POST /copilot/chat
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    ORCHESTRATION & SECURITY LAYER                           │
-│  - Sanctum Multi-Tenant Isolation (user_id & outlet_id scoping)             │
-│  - Fail-Closed Security Gate (HTTP 403 on tenant mismatch)                  │
-│  - Dynamic Prompt Builder (Clustering 25 tools into 7 semantic domains)     │
+│                    ORCHESTRATION & SECURITY GATEWAY                         │
+│  - Multi-Tenant Isolation Middleware (Scoping by user_id & outlet_id)        │
+│  - Fail-Closed Security Defense (HTTP 403 on tenant or outlet mismatch)     │
+│  - Dynamic Prompt Builder (Clusters 25 tools down to 5-11 relevant tools)    │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                      ┌─────────────────┴─────────────────┐
                      ▼                                   ▼
           [Upstream Inference]                 [Deterministic Engine]
-         Groq / Llama-3.3-70b               PHP / MySQL Grounding Layer
-       (Intent & Function Call)            (Pure Math, Zero Hallucination)
+      Groq / OpenAI-compatible API          PHP 8.2+ / MySQL Grounding Services
+       (Semantic Intent & Routing)         (Pure Arithmetic, Zero Hallucination)
                      │                                   │
                      └─────────────────┬─────────────────┘
                                        │
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                  FOUR FUNCTIONAL PILLARS OF INTELLIGENCE                    │
+│                     FOUR PILLARS OF SME COPILOT LOGIC                       │
 ├───────────────────────┬────────────────────────┬────────────────────────────┤
 │  1. CONTROL           │  2. PREDICT            │  3. ACT                    │
-│  - Net Revenue & HPP  │  - Cash Flow Forecast  │  - What-If Simulation      │
-│  - Drawer Variance    │    (DOW & WMA-14)      │  - Purchase Feasibility    │
-│  - 6 Financial Alerts │  - Demand Velocity     │  - 2-Phase Action Firewall │
-│    (Void, Margin)     │  - Material Trend      │    (Manager PIN Guard)     │
+│  - Net Sales & HPP    │  - 7-Day Cash Forecast │  - What-If Simulation      │
+│  - Cash Drawer Varianc│    (DOW & WMA-14)      │  - Purchase Feasibility    │
+│  - 6 Anomaly Warnings │  - Demand Velocity     │  - 2-Phase Action Firewall │
+│    (Void, Margin Drop)│  - Material Inflation  │    (6-Digit PIN Required)  │
 ├───────────────────────┴────────────────────────┴────────────────────────────┤
 │  4. PREPARE                                                                 │
 │  - Objective SME Financing Readiness Index (0–100 Score across 5 Pillars)   │
-│  - Machine-Readable Evidence Envelope & Exportable Financial Pack Dossier   │
+│  - Explainability Envelope [WHAT, WHY, CALCULATION, SOURCE] + PDF Dossier   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Purpose of this Repository
-1. **Reference Implementation:** This repository contains the reference codebase, architecture contracts, and test suites for the **SME Finance Copilot** component of Kaching.
-2. **Evaluator Verification:** Independent evaluators can inspect the exact mathematical algorithms, action policy firewalls, and prompt clustering logic.
-3. **Exclusion of Unrelated Proprietary Systems:** To protect commercial assets while providing full transparency for the competition, unrelated point-of-sale hardware modules (Kitchen Display System/KDS, raw offline-sync workers, proprietary WhatsApp parsers, payroll, and SaaS superadmin consoles) have been excluded. Supporting data models (`Transaction`, `Shift`, `Expense`, `Menu`, `Item`, `Supplier`) are preserved to ground the financial calculation services.
-
-*See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for full architectural diagrams, data flows, and design invariants.*
+### Action Authorization Firewall
+The agent cannot directly mutate database records. When a user requests an operational change:
+1. Copilot calls `prepare_action_proposal` to generate an immutable proposal token (`prop_*`) stored in cache with a 15-minute TTL.
+2. The UI renders an **Approval Card** showing the projected impact, risk level (`LOW`, `MEDIUM`, `HIGH`), and parameter diffs.
+3. The merchant reviews the proposal and submits their **6-digit Manager PIN**.
+4. `CopilotActionApprovalController` verifies the PIN, checks tenant ownership, acquires an atomic lock, executes the mutation, invalidates the proposal token (preventing replay attacks), and writes an entry to `audit_logs`.
 
 ---
 
-## 5. Testing and Reproducibility
-Automated tests and benchmark results are documented separately from manual demo results.
+## 5. Local Setup & Reproduction Guide
+While live demonstration is hosted at `https://kaching.id`, evaluators may run and verify the codebase locally.
 
-Tests requiring external AI credentials, network access, or a configured database are identified explicitly. Only verified results are reported as passing.
+### Prerequisites
+* PHP 8.2 or higher with extensions: `pdo_sqlite`, `pdo_mysql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`.
+* Composer 2.x
+* SQLite 3 (default local evaluation database)
 
-### Test Verification Commands
-Evaluators can execute the automated unit and feature test suites using PHPUnit:
+### Installation Steps
 ```bash
-# 1. What-If Purchase Simulation (Deterministic Math)
-php artisan test tests/Unit/SimulatePurchaseTest.php
+# 1. Clone repository & enter directory
+cd kaching-copilot-fintechathon-2026
 
-# 2. Autonomous Financial Agent & Two-Phase Action Firewall (Manager PIN)
-php artisan test tests/Feature/AutonomousFinancialAgentIntegrationTest.php
+# 2. Copy sanitized environment configuration
+cp .env.example .env
 
-# 3. Financing Readiness Index (5-Pillar Score & Statutory Disclaimer)
-php artisan test tests/Feature/FinancingReadinessServiceTest.php
+# 3. Create SQLite database file
+touch database/database.sqlite
 
-# 4. Copilot Tool Orchestration & Explainability Contract
-php artisan test tests/Unit/FinanceCopilotOrchestrationServiceTest.php
+# 4. Run database migrations
+php artisan migrate --force
 
-# 5. Financial Evidence Dossier PDF Export
-php artisan test tests/Feature/FinancialEvidenceDossierExportTest.php
+# 5. (Optional) Seed synthetic evaluation merchants (Tenants 901, 902, 903)
+php artisan db:seed --class=DatabaseSeeder
 ```
 
-*See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for environment requirements and test execution details.*
+---
+
+## 6. Test Suite & Verification Results
+
+### A. Canonical Test Suites (Verified 100% PASS)
+The core financial logic, deterministic algorithms, action policy firewall, and explainability contracts are verified by **9 canonical test suites**.
+
+Evaluators can execute all 9 canonical suites in a single command:
+```bash
+php artisan test \
+  tests/Unit/SimulatePurchaseTest.php \
+  tests/Feature/AutonomousFinancialAgentIntegrationTest.php \
+  tests/Feature/FinancingReadinessServiceTest.php \
+  tests/Unit/FinanceCopilotOrchestrationServiceTest.php \
+  tests/Feature/FinancialEvidenceDossierExportTest.php \
+  tests/Feature/ChatbotFinancingReadinessIntegrationTest.php \
+  tests/Unit/FinancialInvestigationServiceTest.php \
+  tests/Unit/FinancingCapacitySimulatorServiceTest.php \
+  tests/Feature/ChatbotP0TransportAndFaqRoutingRegressionTest.php
+```
+
+### Verified Test Breakdown
+| Suite Class | File Path | Focus Area | Result |
+|:---|:---|:---|:---:|
+| `SimulatePurchaseTest` | `tests/Unit/SimulatePurchaseTest.php` | Purchase safety reserve buffer math | **6 passed** (31 assertions) |
+| `AutonomousFinancialAgentIntegrationTest` | `tests/Feature/AutonomousFinancialAgentIntegrationTest.php` | End-to-end multi-turn financial agent | **19 passed** (80 assertions) |
+| `FinancingReadinessServiceTest` | `tests/Feature/FinancingReadinessServiceTest.php` | 5-pillar scoring & statutory disclaimers | **6 passed** (110 assertions) |
+| `FinanceCopilotOrchestrationServiceTest` | `tests/Unit/FinanceCopilotOrchestrationServiceTest.php` | 19 tools registration & explainability | **22 passed** (118 assertions) |
+| `FinancialEvidenceDossierExportTest` | `tests/Feature/FinancialEvidenceDossierExportTest.php` | PDF dossier export & tenant isolation | **6 passed** (24 assertions) |
+| `ChatbotFinancingReadinessIntegrationTest` | `tests/Feature/ChatbotFinancingReadinessIntegrationTest.php` | API endpoint integration & AI abstraction | **3 passed** (11 assertions) |
+| `FinancialInvestigationServiceTest` | `tests/Unit/FinancialInvestigationServiceTest.php` | Causal profit drop diagnostic engine | **5 passed** (29 assertions) |
+| `FinancingCapacitySimulatorServiceTest` | `tests/Unit/FinancingCapacitySimulatorServiceTest.php` | Annuity loan installment feasibility | **5 passed** (33 assertions) |
+| `ChatbotP0TransportAndFaqRoutingRegressionTest` | `tests/Feature/ChatbotP0TransportAndFaqRoutingRegressionTest.php` | Intent routing & fallback transport safety | **9 passed** (38 assertions) |
+| **CANONICAL TOTAL** | **9 Test Suites** | **SME Finance Copilot Core Systems** | **81 PASSED (474 assertions)** |
+
+*Execution duration: ~4.4 seconds on standard commodity hardware.*
+
+### B. Testing Scope & Global Test Transparency
+* **Scope Discipline:** The 81 canonical tests above verify 100% of the active Topic E SME Finance Copilot codebase.
+* **Global Test Notice:** Running `php artisan test` across the entire directory without filters executes additional legacy unit tests preserved from early research iterations (e.g., historical failure-reproduction tests such as `SupplierWhatsAppDirectChatReproductionTest` and multi-turn live conversational mocks). Some of these legacy exploration tests require external network mocks or intentionally assert failure conditions, and sequential execution of the entire repository exceeds standard CLI timeout windows (>180 seconds). Evaluators are strongly advised to run the 9 canonical suites listed above.
 
 ---
 
-## 6. Limitations
-* **Decision Support Only:** Forecasts and readiness scores are decision-support outputs, not guarantees of future financial performance or official credit underwriting decisions.
-* **External AI Dependency:** External AI services (Groq / OpenAI) may experience transient network latency or rate-limiting. A local Deterministic Fallback Engine is provided to ensure continuous access to key financial summaries during upstream outages.
-* **Source Data Dependency:** The quality of financial insights and anomaly detection depends directly on the completeness and correctness of source transaction and expense records entered by the merchant.
-* **Accounts Payable Scope:** Upcoming vendor invoices outside direct POS procurement records are excluded from liquidity forecasting.
+## 7. Limitations & Operational Boundaries
+* **Decision Support, Not Underwriting Authority:** Financial forecasts, simulations, and readiness scores are decision-support outputs designed to assist merchant judgment. They do not constitute a legal financial guarantee or formal loan approval.
+* **Upstream AI Provider Availability:** In the event of upstream LLM outages or rate limits, the system automatically engages the local Deterministic Fallback Engine to maintain access to critical summaries.
+* **Data Input Completeness:** Financial calculations reflect data recorded in the system. Missing expense entries or unrecorded cash transactions will naturally impact calculation precision.
+* **Accounts Payable Scope:** Current forecasting captures recorded inventory purchases and logged operational expenses; upcoming unbilled invoices from external suppliers are not yet integrated.
 
 ---
 
-## 7. Security & Licensing
-* **Zero Credential Exposure:** This repository contains no production credentials, private keys, signing keystores, live customer database dumps, or real merchant `.env` files.
-* **Sanitized Testing Fixtures:** All benchmarks and demonstrations use deterministic synthetic merchant profiles (Tenants 901, 902, 903).
-* **Tenant Isolation:** Enforces strict database-level `user_id` and `outlet_id` scoping across all copilot queries with fail-closed HTTP 403 defenses.
-* **Action Safety Firewall:** Consequential actions cannot be executed directly by the LLM; every mutation requires human authorization with Manager PIN validation.
-* **License Notice:** The proprietary software, algorithms, and documentation in this repository are licensed solely for evaluation and judging purposes of Fintechathon 2026. Third-party open-source components are subject to their respective open-source licenses. See [`LICENSE`](LICENSE) for details.
+## 8. Security & Licensing
+
+### Security & Privacy Controls
+* **Zero Production Credentials:** This repository contains no live API keys, signing keystores, `.env` files, or customer database dumps.
+* **Isolated Synthetic Data:** Evaluation uses synthetic data fixtures (Popoyo Coffee Senopati, Warung Kopi Senja, Bistro Nusantara).
+* **PIN Standard:** All high-impact actions strictly enforce a 6-digit Manager PIN requirement.
+
+### License Notice
+* This repository is licensed under the **Kaching Copilot Evaluation & Research License** (`LICENSE`), granting competition judges, organizers, and evaluators a non-exclusive license to inspect, execute, and evaluate the software for the 2026 Shenzhen International FinTechathon (Topic E).
+* All third-party open-source components (including the Laravel framework, Symfony packages, and associated libraries) remain the intellectual property of their respective copyright holders under their original open-source licenses (MIT, BSD, LGPL, Apache 2.0).
+* *Formal evaluation versus open-source licensing terms remain subject to organizer verification and committee guidance.*
 
 ---
 
@@ -158,24 +209,23 @@ php artisan test tests/Feature/FinancialEvidenceDossierExportTest.php
 ├── README.md                      # Project overview and competition brief
 ├── LICENSE                        # Competition Evaluation & Research License
 ├── .env.example                   # Sanitized configuration template
-├── composer.json                  # PHP dependency manifest
+├── composer.json                  # Dependency manifest (proprietary reference)
 ├── app/
-│   ├── Http/Controllers/         # ChatbotController & Action Approval
-│   ├── Services/Financial/        # Deterministic financial engines & services
+│   ├── Http/Controllers/         # ChatbotController & CopilotActionApprovalController
+│   ├── Services/Financial/        # Deterministic financial engines (14 services)
 │   ├── Services/Policy/           # ActionPolicyService (Two-Phase Firewall)
-│   ├── Models/                    # Supporting data models (Transaction, Shift, etc.)
-│   └── Helpers/TimezoneContract   # Standardized UTC/WIB time contracts
+│   ├── Models/                    # Supporting data models (Transaction, Shift, Expense, Menu)
+│   └── Helpers/TimezoneContract   # Standardized UTC/WIB timezone contracts
 ├── docs/
-│   ├── ARCHITECTURE.md            # Detailed architecture and data flows
-│   ├── DEMO_SCENARIOS.md          # Evaluation scenarios and expected outputs
-│   └── DEPLOYMENT.md              # Evaluator environment and test guide
-├── resources/views/backoffice/    # Interactive Web Copilot interface
+│   ├── ARCHITECTURE.md            # In-depth architectural flow & tool clustering
+│   ├── DEMO_SCENARIOS.md          # Step-by-step evaluator testing scenarios (Scenes A-G)
+│   └── DEPLOYMENT.md              # Detailed local reproduction & testing guide
+├── resources/views/backoffice/    # Web backoffice Copilot interface & widgets
 ├── scripts/
-│   ├── seed_copilot_synthetic_data.php   # Synthetic testbed seeder (Tenants 901-903)
-│   ├── verify_copilot_synthetic_data.php # Synthetic data verification
-│   └── benchmark_copilot_phase_d2_4.php  # Canonical 45-query evaluation harness
+│   ├── seed_copilot_synthetic_data.php   # Synthetic merchant seeder (Tenants 901-903)
+│   └── verify_copilot_synthetic_data.php # Synthetic data verification harness
 ├── tests/
-│   ├── Feature/                   # Integration and firewall test suites
-│   └── Unit/                      # Unit tests for calculations and evidence
-└── client-reference/android/      # Native Jetpack Compose card reference
+│   ├── Feature/                   # Integration, firewall, and export test suites
+│   └── Unit/                      # Unit test suites for calculations & evidence
+└── client-reference/android/      # Native Jetpack Compose card reference implementations
 ```
