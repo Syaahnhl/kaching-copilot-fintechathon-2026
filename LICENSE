@@ -1,0 +1,16 @@
+KACHING COPILOT EVALUATION & RESEARCH LICENSE
+Fintechathon 2026 — International Track, Topic E: SME Finance Copilot
+
+Copyright (c) 2026 Kaching FinTech Team. All rights reserved.
+
+1. GRANT OF EVALUATION LICENSE
+Subject to the terms of this License, the Kaching FinTech Team hereby grants to the judges, evaluators, organizers, and committee members of the 2026 Shenzhen International FinTechathon a non-exclusive, non-transferable, royalty-free license to review, inspect, execute, test, and evaluate the source code, documentation, and evaluation artifacts contained in this repository solely for the purpose of assessing the submission under Topic E (SME Finance Copilot).
+
+2. RESERVATION OF PROPRIETARY RIGHTS
+All right, title, and interest in and to the Kaching Copilot proprietary software, algorithms, architecture, and documentation remain exclusively with the Kaching FinTech Team and its authors. Except as expressly granted in Section 1, no rights are granted to copy, modify, distribute, publish, sublicense, commercialize, or reverse-engineer this software in whole or in part without prior explicit written permission.
+
+3. THIRD-PARTY COMPONENTS & OPEN-SOURCE ATTRIBUTION
+This repository references and utilizes open-source software libraries, packages, and frameworks (including the Laravel framework, Symfony components, and associated dependencies). Each third-party package remains the property of its respective copyright holder and is governed by its respective open-source license (including MIT, BSD, Apache 2.0, and LGPL). The Kaching FinTech Team makes no claim of ownership or authorship over third-party open-source components.
+
+4. DISCLAIMER OF WARRANTY
+THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE OR EVALUATION ARTIFACTS.
